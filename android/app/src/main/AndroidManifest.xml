@@ -2,10 +2,10 @@
     package="com.example.zee_one_erp">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="zee_one_erp"
+        android:label="SKF Foundation"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

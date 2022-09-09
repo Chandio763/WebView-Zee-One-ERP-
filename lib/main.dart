@@ -112,52 +112,54 @@ class _WebViewERPState extends State<WebViewERP> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.green,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFF40E0D0),
-        title: const Text('Zee-One ERP'),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
-        actions: <Widget>[
-          SampleMenu(_controller.future),
-        ],
-      ),
-      bottomSheet: NavigationControls(_controller.future),
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   backgroundColor: const Color(0xFF40E0D0),
+      //   title: const Text('Zee-One ERP'),
+      //   // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
+      //   actions: <Widget>[
+      //     SampleMenu(_controller.future),
+      //   ],
+      // ),
+      // bottomSheet: NavigationControls(_controller.future),
       // We're using a Builder here so we have a context that is below the Scaffold
       // to allow calling Scaffold.of(context) so we can show a snackbar.
-      body: WillPopScope(
-        onWillPop: () => _onWillPop(context),
-        child: Builder(builder: (BuildContext context) {
-          return WebView(
-            initialUrl: 'http://124.29.208.110:8080/Login.aspx',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-              _controller.future.then((value) => _backController = value);
-            },
-            onProgress: (int progress) {
-              print('WebView is loading (progress : $progress%)');
-            },
-            javascriptChannels: <JavascriptChannel>{
-              _toasterJavascriptChannel(context),
-            },
-            navigationDelegate: (NavigationRequest request) {
-              if (request.url.startsWith('https://www.youtube.com/')) {
-                print('blocking navigation to $request}');
-                return NavigationDecision.prevent;
-              }
-              print('allowing navigation to $request');
-              return NavigationDecision.navigate;
-            },
-            onPageStarted: (String url) {
-              print('Page started loading: $url');
-            },
-            onPageFinished: (String url) {
-              print('Page finished loading: $url');
-            },
-            gestureNavigationEnabled: true,
-            backgroundColor: const Color(0x00000000),
-          );
-        }),
+      body: SafeArea(
+        child: WillPopScope(
+          onWillPop: () => _onWillPop(context),
+          child: Builder(builder: (BuildContext context) {
+            return WebView(
+              initialUrl: 'https://krazythoughts.com/',
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (WebViewController webViewController) {
+                _controller.complete(webViewController);
+                _controller.future.then((value) => _backController = value);
+              },
+              onProgress: (int progress) {
+                print('WebView is loading (progress : $progress%)');
+              },
+              javascriptChannels: <JavascriptChannel>{
+                _toasterJavascriptChannel(context),
+              },
+              navigationDelegate: (NavigationRequest request) {
+                if (request.url.startsWith('https://www.youtube.com/')) {
+                  print('blocking navigation to $request}');
+                  return NavigationDecision.prevent;
+                }
+                print('allowing navigation to $request');
+                return NavigationDecision.navigate;
+              },
+              onPageStarted: (String url) {
+                print('Page started loading: $url');
+              },
+              onPageFinished: (String url) {
+                print('Page finished loading: $url');
+              },
+              gestureNavigationEnabled: true,
+              backgroundColor: const Color(0x00000000),
+            );
+          }),
+        ),
       ),
       //floatingActionButton: favoriteButton(),
     );
@@ -168,7 +170,7 @@ class _WebViewERPState extends State<WebViewERP> {
         name: 'Toaster',
         onMessageReceived: (JavascriptMessage message) {
           // ignore: deprecated_member_use
-          Scaffold.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message.message)),
           );
         });
@@ -322,7 +324,7 @@ class SampleMenu extends StatelessWidget {
     final String cookies =
         await controller.runJavascriptReturningResult('document.cookie');
     // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
@@ -339,7 +341,7 @@ class SampleMenu extends StatelessWidget {
     await controller.runJavascript(
         'caches.open("test_caches_entry"); localStorage["test_localStorage"] = "dummy_entry";');
     // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Added a test entry to cache.'),
     ));
   }
@@ -355,7 +357,7 @@ class SampleMenu extends StatelessWidget {
       WebViewController controller, BuildContext context) async {
     await controller.clearCache();
     // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Cache cleared.'),
     ));
   }
@@ -367,7 +369,7 @@ class SampleMenu extends StatelessWidget {
       message = 'There are no cookies.';
     }
     // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
   }
@@ -474,7 +476,7 @@ class NavigationControls extends StatelessWidget {
                         await controller.goBack();
                       } else {
                         // ignore: deprecated_member_use
-                        Scaffold.of(context).showSnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('No back history item')),
                         );
                         return;
@@ -490,7 +492,7 @@ class NavigationControls extends StatelessWidget {
                         await controller.goForward();
                       } else {
                         // ignore: deprecated_member_use
-                        Scaffold.of(context).showSnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text('No forward history item')),
                         );
